@@ -4,6 +4,7 @@ const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
 const cors = require('cors');
+const path = require('path');
 const passport = require('passport');
 const httpStatus = require('http-status');
 const config = require('./config/config');
@@ -28,6 +29,8 @@ app.use(express.json());
 
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 // sanitize request data
 app.use(xss());

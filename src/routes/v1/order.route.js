@@ -9,7 +9,7 @@ const router = express.Router();
 router
   .route('/')
   .post(auth('manageOrder'), validate(orderValidation.createOrder), orderController.createOrder)
-  .get(auth('getOrders'), orderController.getOrders);
+  .get(auth(), orderController.getOrders);
 
 router
 .route('/:orderId')

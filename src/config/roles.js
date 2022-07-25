@@ -1,8 +1,8 @@
 const allRoles = {
     user: [],
-    procurement: ['getUsers', 'manageUsers', 'manageInspectionUser', 'manageChecklist', 'manageOrder', 'getOrders'],
-    inspection: ['getUsers', 'updateChecklist'],
-    admin: ['getUsers', 'manageUsers', 'manageInspectionUser', 'manageProcurementUser', 'manageAssign', 'manageChecklist', 'manageOrder', 'getOrders'],
+    procurement: ['getUsers', 'manageUsers', 'manageInspectionUser', 'manageChecklist', 'manageOrder'],
+    inspection: ['updateChecklist'],
+    admin: ['getUsers', 'manageUsers', 'manageInspectionUser', 'manageProcurementUser', 'manageAssign', 'manageChecklist', 'manageOrder'],
   };
   
   const roles = Object.keys(allRoles);
