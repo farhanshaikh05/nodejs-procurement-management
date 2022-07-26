@@ -1,6 +1,6 @@
 const Joi = require('joi');
 const { objectId } = require('./custom.validation');
-const types = ["textbox", "radio", "checkbox", "dropdown"];
+const types = ["textbox", "radio", "checkbox", "dropdown", "file"];
 
 const createChecklist = {
   body: Joi.object().keys({

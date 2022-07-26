@@ -2,6 +2,9 @@ const httpStatus = require('http-status');
 const { Checklist, Order } = require('../models');
 const ApiError = require('../utils/ApiError');
 var mongoose = require('mongoose');
+const https = require('https');
+const fs = require('fs');
+const { isImageUrl, getUrlExtension } = require('../utils/imageHelper');
 
 const createChecklist = async (userBody, loginUser) => {
   if (!await Order.findById(userBody.orderId)) {
@@ -70,6 +73,13 @@ const fillChecklist = async (checklistId, payloadField, loginUser) => {
       }
 
       if (fieldExist) {
+        if (field.type == 'file') {
+          let image_path='./public/uploads/';
+          let fileName = field._id.toString();
+          saveImageToDisk(fieldValue, image_path + fileName);
+          fieldValue = fileName;
+        }
+
         await Checklist.updateOne({
           "_id": checklistId,
           "fields._id": field._id,
@@ -91,14 +101,24 @@ function checkTypeWiseValue(fieldType, value, options) {
     case 'textbox':
     case 'dropdown':
     case 'radio':
-        if (typeof value != 'string') {
-          throw new ApiError(httpStatus.BAD_REQUEST, `"${fieldType}" field value should be string!`);
-        }
-        //Value validation
-        if (value) {
-          return true;
-        }
-      break;
+      if (typeof value != 'string') {
+        throw new ApiError(httpStatus.BAD_REQUEST, `"${fieldType}" field value should be string!`);
+      }
+      //Value validation
+      if (value) {
+        return true;
+      }
+    break;
+
+    case 'file':
+      if (typeof value != 'string') {
+        throw new ApiError(httpStatus.BAD_REQUEST, `"${fieldType}" field value should be string!`);
+      }
+      if (!isImageUrl(value)) {
+        throw new ApiError(httpStatus.BAD_REQUEST, `"${fieldType}" should be image url!`);
+      }
+      return true;
+    break;
     
     case 'checkbox':
       if (!Array.isArray(value)) {
@@ -179,6 +199,16 @@ const userChecklist = async (loginUser) => {
       }
     }
   ]);
+}
+
+function saveImageToDisk(url, localPath) {
+  const ext = getUrlExtension(url);
+  var file = fs.createWriteStream(localPath + ext);
+
+  var request = https.get(url, function(response) {
+    console.log('response...', response);
+    response.pipe(file);
+  });
 }
 
 module.exports = {

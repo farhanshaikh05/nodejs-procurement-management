@@ -1,6 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const xss = require('xss-clean');
+const multer = require('multer');
 const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
 const cors = require('cors');
@@ -13,6 +14,7 @@ const { jwtStrategy } = require('./config/passport');
 const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
+const fileupload = require('express-fileupload');
 
 const app = express();
 
@@ -30,7 +32,15 @@ app.use(express.json());
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('./public'));
+app.use(express.static('./tmp'))
+
+app.use(
+  fileupload({
+      useTempFiles: true,
+      tempFileDir: '/tmp/',
+  })
+)
 
 // sanitize request data
 app.use(xss());
